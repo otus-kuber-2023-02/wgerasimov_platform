@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: server
-        image: gervladislav/payment-service:v0.0.2
+        image: gervladislav/payment-service:v0.0.1
         ports:
         - containerPort: 50051
         env:
