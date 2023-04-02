@@ -1,0 +1,6 @@
+dependencies:
+- name: frontend
+  repository: file:///home/gvv/otus/lesson_6/frontend
+  version: 0.1.0
+digest: sha256:127f52068a3cecc8347b8322482a886713afd78d896e650e061cf8825b2bfc9a
+generated: "2023-03-29T21:39:44.542448257+03:00"

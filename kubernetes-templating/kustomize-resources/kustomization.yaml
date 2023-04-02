@@ -1,0 +1,3 @@
+resources:
+- bases/productcatalogservice-deployment.yaml
+- bases/productcatalogservice-service.yaml
