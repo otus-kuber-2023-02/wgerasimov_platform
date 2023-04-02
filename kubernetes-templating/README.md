@@ -1,0 +1,16 @@
+1. Установлен Helm3 v3.11.2
+2. Добаивл stable репозиторий
+3. Установил nginx-ingress
+4. Установил Metallb для предоставлению сервису nginx-ingress ExternalIP
+5. Установлен cert-manager v1.11.0
+6. Создание корневого сертификата (самоподписной)
+7. Создание Intermediate сертификата для company.local
+8. Поместил в директорию kubernetes-templating/cert-manager манифест, который создает secret с Intermediate сертификатом и ключем, и  ClusterIsuer. В последствии с помощью этого ключа cert-manager будет автоматически выписывать сертификаты. 
+9. Так как работа ведется в k8s кластере запущенном с помощью kind, необходимо было прописать статик маршрут для сети Metallb в кластер kubernetes: sudo ip route add 172.17.255.0/24 via 172.18.0.3
+10. Поправил файлик /etc/hosts для резолва имени chartmuseum.company.local
+11. В директории  kubernetes-templating/chartmuseum/ создал values.yaml с параметрами для установки chartmuseum с помощью Helm3. Параметры связанные с Ingress выставлены таким образом, чтоб при создании ингресса осуществлялся запрос к cert-manager для создания сертификата. (Скрины с экрана во вложении: chartmuseum.company.local.jpg, chartmuseum-cert.jpg)
+12. Создал директорию harbor и получил туда значения values.yaml командой helm show values harbor/harbor --version=1.10.4 > values.yaml Поправил конфигурацию как указано в рекомендации. Включил Ingress, TLS, отключил Notary. Установил helm чарт командой helm install harbor harbor/harbor -f values.yaml Сервис заработал. Браузер показал доступность сервера с валидным сертификатом. (Скрины с экрана во вложении harbor.PNG, tls-harbor.PNG)
+13. Скачал с github all-hipster-shop.yaml Создал два helm chart: frontend и hipster-shop. Разделил манифест на два чарта. В чарте фронтенд выделил yaml файл с переменными для temlate frontend. Добавил манивест для ingress, который с помощью cert-manager создает секрет с сертификатами. Chart frontend добавил в качестве зависимости к чарту hipster-shop. Проверил доступность подов, сервисов. В браузере открылась страничка с магазином. Сертификат валиден. (Скрины с экрана во вложении hipster-shop.PNG)
+14. Упаковал чарты в gzip формат с помощью команды helm package <chart_name> и выложил в локальный репозиторий harbor. (Скриншот во вложении. harbor and 2 charts in.PNG) Написал repo.sh в котором описана команда для установки helm репозитория. Так как harbor развернут локально, скрипт не сработает вне локального ПК.
+15. Установлен kubecfg версии 0.29.2. Написал services.jsonnet в котором описал два сервиса и два деплоймента. в результате проверки командой kubecfg show services.jsonnet корректно выводятся манифесты. Командой kubecfs update service.jsonnet -n hipster-shop корректно происходит деплой.
+16. Выполнил костомизацию сервиса productcatalogservice. Можно развернуть для нескольких окружений. Команды для установки. Для prod среды: kubectl apply -k kubernetes-templating/kustomize/overrides/prod/ Для test среды: kubectl apply -k kubernetes-templating/kustomize/overrides/test/
