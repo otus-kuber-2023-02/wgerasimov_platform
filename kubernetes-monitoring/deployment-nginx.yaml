@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: nginx-custom
-        image: jfrog.equifax.local/docker-bureau-local/nginx:070523
+        image: docker.io/gervladislav/nginx:v0.0.1
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80

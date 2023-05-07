@@ -5,3 +5,5 @@
 5. Написан servicemonitoring-nginx.yaml
 6. В web интерфейсе прометеус Status -> Targets появился созданный serviceMonitor
 7. График в Grafana ![img.png](img.png)
+
+Прометеус и графана уже были подняты в кластере кубернетес. 
