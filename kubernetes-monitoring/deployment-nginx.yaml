@@ -1,0 +1,27 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-custom
+  namespace: homework9
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx-custom
+  template:
+    metadata:
+      labels:
+        app: nginx-custom
+    spec:
+      containers:
+      - name: nginx-custom
+        image: jfrog.equifax.local/docker-bureau-local/nginx:070523
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+      - name: exporter
+        image: docker.io/nginx/nginx-prometheus-exporter:0.10.0
+        args: ["-nginx.scrape-uri", "http://localhost:80/basic_status"]
+        ports:
+        - containerPort: 9113
