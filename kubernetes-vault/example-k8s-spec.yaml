@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: vault-agent-example
+  namespace: homework18
+spec:
+  serviceAccountName: test-app
+
+  volumes:
+  - configMap:
+      items:
+      - key: vault-agent-config.hcl
+        path: vault-agent-config.hcl
+      name: example-vault-agent-config
+    name: config
+  - emptyDir: {}
+    name: shared-data
+
+  initContainers:
+  - args:
+    - agent
+    - -config=/etc/vault/vault-agent-config.hcl
+    - -log-level=debug
+    env:
+    - name: VAULT_ADDR
+      value: http://10.244.20.113:8200
+    - name: SKIP_SETCAP
+      value: "true"
+    image: vault
+    name: vault-agent
+    volumeMounts:
+    - mountPath: /etc/vault
+      name: config
+    - mountPath: /etc/secrets
+      name: shared-data
+
+  containers:
+  - image: nginx
+    name: nginx-container
+    ports:
+    - containerPort: 80
+    volumeMounts:
+    - mountPath: /usr/share/nginx/html
+      name: shared-data
